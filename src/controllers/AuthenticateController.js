@@ -13,6 +13,7 @@ class Authenticate_Controller {
     const password = req.body.password;
     const user = { name: username };
     if (!checkIfEmailInString(username)) {
+      console.log("check", checkIfEmailInString(username));
       try {
         const existingUser = await sequelize.query(
           `SELECT * FROM db01_owner.v_c7_admin_user 
@@ -22,6 +23,7 @@ class Authenticate_Controller {
             replacements: { username: username },
             type: sequelize.QueryTypes.SELECT,
           });
+
         if (existingUser.password) {
           if (customEncode(password) == existingUser.password) {
             res.json({
