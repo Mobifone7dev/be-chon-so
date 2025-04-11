@@ -14,14 +14,12 @@ class Authenticate_Controller {
     const user = { name: username };
     var re =
       /(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))/;
-
-    console.log("check", re.test(username));
     if (!re.test(username)) {
       console.log("check", checkIfEmailInString(username));
       try {
         const existingUser = await sequelize.query(
           `SELECT * FROM db01_owner.v_c7_admin_user 
-          user_name = :username
+         where  user_name = :username
          `,
           {
             replacements: { username: username },
