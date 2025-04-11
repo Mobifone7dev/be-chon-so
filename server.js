@@ -35,7 +35,11 @@ app.use((req, res, next) => {
       'https://tracuu7.mobifone.vn:8111',
       'https://tracuu7.mobifone.vn:8103',
       'https://tracuu7.mobifone.vn:8106',
+      'https://chonso7.mobifone.vn:8107',
+      'https://chonso7.mobifone.vn:8112',
       'http://localhost:8111',
+      'http://localhost:8112',
+
     ];
   if (allowedOrigins.indexOf(req.headers.origin) !== -1) {
     res.setHeader('Access-Control-Allow-Origin', req.headers.origin);
@@ -60,6 +64,8 @@ const cspConfig = {
     styleSrc: ["'self'", "maxcdn.bootstrapcdn.com"],
     imgSrc: ["'self'", "tracuu7.mobifone.vn"],
     connectSrc: ["'self'", "tracuu7.mobifone.vn"],
+    imgSrc: ["'self'", "chonso7.mobifone.vn"],
+    connectSrc: ["'self'", "chonso7.mobifone.vn"],
     fontSrc: ["'self'", "fonts.gstatic.com"],
     objectSrc: ["'none'"],
     upgradeInsecureRequests: [],
