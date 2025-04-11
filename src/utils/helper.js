@@ -6,20 +6,7 @@ function lowerCaseKeys(obj) {
     return accumulator;
   }, {});
 }
-function checkFileType(file, cb) {
-  // Allowed ext
-  const filetypes = /jpeg|jpg|png|gif/;
-  // Check ext
-  const extname = filetypes.test(path.extname(file.originalname).toString());
-  // Check mime
-  const mimetype = filetypes.test(file.mimetype);
 
-  if (mimetype && extname) {
-    return cb(null, true);
-  } else {
-    cb("Error: Images Only!");
-  }
-}
 function checkIfEmailInString(text) {
   var re =
     /(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))/;
@@ -43,4 +30,3 @@ function customEncode(input) {
 module.exports = customEncode;
 module.exports = checkIfEmailInString;
 module.exports = lowerCaseKeys;
-module.exports = checkFileType;
