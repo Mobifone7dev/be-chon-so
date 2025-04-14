@@ -27,6 +27,4 @@ function customEncode(input) {
   const result = Buffer.from(byteArray).toString('base64');
   return result;
 }
-module.exports = customEncode;
-module.exports = checkIfEmailInString;
-module.exports = lowerCaseKeys;
+module.exports = { customEncode, checkIfEmailInString, lowerCaseKeys };

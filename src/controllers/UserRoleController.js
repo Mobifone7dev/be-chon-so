@@ -1,12 +1,7 @@
-const DbConnection = require("../../DbConnection");
-const DbSaleOwnerConnection = require("../../DbSaleOwnerConnection");
-const lowerCaseKeys = require("../../src/utils/helper");
-var moment = require("moment");
 const oracledb = require("oracledb");
 oracledb.autoCommit = true;
 const db = require("../models");
 const fs = require("fs");
-const ManualKpi = db.manualKpi;
 const { sequelize } = require('../models'); // Import s
 const { query, validationResult } = require("express-validator");
 

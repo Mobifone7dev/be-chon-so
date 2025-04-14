@@ -2,11 +2,11 @@ const dbConfig = require("../config/dbConfig.js");
 require('dotenv').config();
 
 const { Sequelize, DataTypes } = require("sequelize");
-
-const sequelize = new Sequelize(dbConfig.DB, dbConfig.USER, dbConfig.PASSWORD, {
-  host: dbConfig.HOST,
+console.log("process", process.env.USER_WEBSITE)
+const sequelize = new Sequelize(process.env.DB, process.env.USER_WEBSITE, process.env.PASSWORD_WEBSITE, {
+  host: process.env.HOST,
   post: 1521,
-  dialect: dbConfig.dialect,
+  dialect: process.env.DIALECT,
   operatorsAliases: false,
   quoteIdentifiers: false,
 
@@ -33,10 +33,9 @@ const db = {};
 db.Sequelize = Sequelize;
 db.sequelize = sequelize;
 
-db.menu = require("./menuModel.js")(sequelize, DataTypes);
-db.webUserModel = require("./webUserModel.js")(sequelize, DataTypes);
-db.webUserRoleModel = require("./webUserRoleModel.js")(sequelize, DataTypes);
-db.manualKpi = require("./kpiModel.js")(sequelize, DataTypes);
+// db.menu = require("./menuModel.js")(sequelize, DataTypes);
+// db.webUserModel = require("./webUserModel.js")(sequelize, DataTypes);
+// db.webUserRoleModel = require("./webUserRoleModel.js")(sequelize, DataTypes);
 
 db.sequelize.sync({ force: false }).then(() => {
   console.log("yes re-sync done!");

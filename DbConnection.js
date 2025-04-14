@@ -5,9 +5,9 @@ require("dotenv").config();
 var getConnected = function (sql, params, callback) {
   oracledb.getConnection(
     {
-      user: process.env.USER_KPI,
-      password: process.env.PASSWORD_KPI,
-      connectString: process.env.CONNECT_STRING_KPI,
+      user: process.env.USER_WEBSITE,
+      password: process.env.PASSWORD_WEBSITE,
+      connectString: process.env.CONNECT_STRING_WEBSITE,
     },
     function (err, connection) {
       if (err) {
@@ -43,9 +43,9 @@ async function execute(sql, params) {
   let connection;
   try {
     connection = await oracledb.getConnection({
-      user: process.env.USER_KPI,
-      password: process.env.PASSWORD_KPI,
-      connectString: process.env.CONNECT_STRING_KPI,
+      user: process.env.USER_WEBSITE,
+      password: process.env.PASSWORD_WEBSITE,
+      connectString: process.env.CONNECT_STRING_WEBSITE,
     });
 
     let queryResult;
@@ -72,9 +72,9 @@ async function execute(sql, params) {
 //   let connection;
 //   try {
 //     connection = await oracledb.getConnection({
-//       user: process.env.USER_KPI,
-//       password: process.env.PASSWORD_KPI,
-//       connectString: process.env.CONNECT_STRING_KPI,
+//       user: process.env.USER_WEBSITE,
+//       password: process.env.PASSWORD_WEBSITE,
+//       connectString: process.env.CONNECT_STRING_WEBSITE,
 //     });
 //     // Khai báo biến để nhận kết quả trả về từ function
 
