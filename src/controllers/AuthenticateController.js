@@ -19,7 +19,7 @@ class Authenticate_Controller {
          where  user_name = :username
          `,
           {
-            replacements: { username: username },
+            replacements: { username: username.toUpperCase() },
             type: sequelize.QueryTypes.SELECT,
           });
         console.log("existingUser", existingUser, existingUser[0].PASSWORD, customEncode(password))
