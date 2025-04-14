@@ -22,7 +22,7 @@ class Authenticate_Controller {
             replacements: { username: username.toUpperCase() },
             type: sequelize.QueryTypes.SELECT,
           });
-        console.log("existingUser", existingUser, existingUser[0].PASSWORD, customEncode(password))
+        // console.log("existingUser", existingUser, existingUser[0].PASSWORD, customEncode(password))
         if (existingUser && existingUser[0] && existingUser[0].PASSWORD) {
           if (customEncode(password) == existingUser[0].PASSWORD) {
             const accessToken = jwt.sign(user, process.env.ACCESS_TOKEN_SECRET, {
