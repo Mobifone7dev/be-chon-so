@@ -1,0 +1,160 @@
+const { Association } = require("sequelize");
+var Sequelize = require("sequelize");
+const DbWebsiteConnection = require("../../DbWebsiteConnection");
+const db = require("../models");
+const { sequelize } = require('../models'); // Import sequelize từ nơi đã cấu hình
+
+class ChonsoController {
+  async getValidEmails(req, res) {
+    const { email } = req.body;
+  
+    if (!email) {
+      return res.status(400).send({ message: "Email is required" });
+    }
+  
+    console.log("Checking email:", email);
+  
+    try {
+      const [result] = await db.sequelize.query(
+        `SELECT email 
+         FROM user_access 
+         WHERE LOWER(email) = LOWER(:email) 
+         AND ROWNUM = 1`,  // Dùng ROWNUM cho Oracle để giới hạn kết quả
+        {
+          replacements: { email },
+          type: Sequelize.QueryTypes.SELECT,
+        }
+      );
+  
+      console.log("SQL Result:", result);
+  
+      if (result) {
+        return res.send({ allowed: true });
+      } else {
+        return res.send({ allowed: false });
+      }
+    } catch (error) {
+      console.error("Error checking email permission:", error);
+      res.status(500).send({ error: "Internal Server Error", details: error.message });
+    }
+  }
+  
+  async Chonso(req, res) {
+      try {
+        const limit = parseInt(req.query.limit) || 10; // Số bản ghi trên mỗi trang
+        let search = req.query.search || ""; // Lấy từ khóa tìm kiếm từ query string
+        const type = req.query.type || ""; // Lấy giá trị SPE_NUMBER_TYPE từ query string
+        const shopCodeInput = req.query.shopCode || ""; // Nhận đầu vào từ người dùng
+
+        // Nếu có từ khóa tìm kiếm, thay thế dấu '*' thành '%'
+        if (search) {
+          search = search.replace(/\*/g, "%");
+        }
+  
+        // Thêm điều kiện LIKE vào SQL nếu có từ khóa tìm kiếm
+        let whereCondition = search ? `WHERE a.TEL_NUMBER LIKE '${search}'` : "";
+
+        
+          // Thêm điều kiện SPE_NUMBER_TYPE nếu có giá trị 'type'
+          if (type) {
+            if (type === '10') {
+              whereCondition += ` AND a.SPE_NUMBER_TYPE = 'Tự do'`; // Tu do
+            } else if (type >= '1' && type <= '9') {
+              whereCondition += ` AND a.SPE_NUMBER_TYPE = '${type}'`; // Những giá trị từ 1 đến 9
+            }
+          }
+
+          // ✅ Chỉ tìm 1 từ khóa trên SHOP_CODE
+          if (shopCodeInput) {
+            const keyword = shopCodeInput
+              .trim()
+              .toUpperCase()
+              .replace(/\s+/g, '%'); // thay tất cả khoảng trắng thành %
+          
+            whereCondition += ` AND a.SHOP_CODE LIKE '%${keyword}%'`;
+          }
+        // Câu SQL lấy dữ liệu từ cơ sở dữ liệu
+        let sql = `
+        SELECT v1.*, v2.name FROM (  
+        SELECT a.TEL_NUMBER, a.HLR_EXISTS, a.SPE_NUMBER_TYPE,
+          DECODE(spe_number_type, '1', 'CK1500', '2', 'CK1200', '3', 'CK1000', '4', 'CK800',
+         '5', 'CK500', '6', 'CK400', '7', 'CK300', '8', 'CK250', '9', 'CK150', '10', 'Tự do', 'KXD') loai_ck, a.SHOP_CODE, a.CHANGE_DATETIME
+          FROM v_kho_so_all a
+          ${whereCondition}
+          AND hlr_exists in (1,3) 
+          AND ROWNUM <= ${limit} 
+          ) v1 left join db01_owner.shop_tcqlkh v2 on v1.shop_code = v2.shop_code order by v1.tel_number asc
+        `;
+        
+        console.log("Generated SQL:", sql); // Debug câu SQL để kiểm tra
+  
+        // Thực thi câu SQL
+        DbWebsiteConnection.getConnected(sql, {}, function (result) {
+          if (result) {
+            // Chuyển đổi CHANGE_DATETIME sang định dạng ngày tháng năm
+          const formattedResult = result.map(item => {
+            // Kiểm tra nếu có CHANGE_DATETIME và định dạng lại
+            if (item.CHANGE_DATETIME) {
+              const date = new Date(item.CHANGE_DATETIME);
+              const day = date.getDate();
+              const month = date.getMonth() + 1; // Lấy tháng (cộng thêm 1 vì tháng bắt đầu từ 0)
+              const year = date.getFullYear();
+              // Định dạng lại ngày tháng năm theo kiểu "dd/mm/yyyy"
+              item.CHANGE_DATETIME = `${day < 10 ? '0' + day : day}/${month < 10 ? '0' + month : month}/${year}`;
+            }
+            return item;
+          });
+
+          res.send({ result: formattedResult, limit: limit });
+          } else {
+            res.status(404).send({ message: "No data found." }); // Trả về lỗi nếu không có dữ liệu
+          }
+        });
+      } catch (error) {
+        console.error("Database Query Error:", error); // Log lỗi nếu có
+        res.status(500).send({ error: "Internal Server Error" }); // Trả về lỗi server
+      }
+    }
+
+    async insertChonso(req, res) {
+      const { email, isdn } = req.body;
+      const ip_address =
+      (req.headers["x-forwarded-for"] && req.headers["x-forwarded-for"].split(",")[0].trim()) ||
+      req.connection?.remoteAddress ||
+      req.socket?.remoteAddress ||
+      req.connection?.socket?.remoteAddress;
+    
+    console.log("IP client:", ip_address);
+
+      console.log("Body nhận được:", req.body); // 👈 In thử ra
+      console.log("IP client:", ip_address);
+
+
+      if (email && isdn) {
+        const result = await DbWebsiteConnection.insertChonSo(email, isdn, ip_address);
+        let message;
+    
+        switch (result) {
+          case 1:
+            message = "Insert thành công.";
+            break;
+          case 2:
+            message = "User không thuộc shop_code nào.";
+            break;
+          case 0:
+          default:
+            message = "Đã xảy ra lỗi khi chọn số ==.";
+            break;
+        }
+    
+        res.send({ result, message });
+      } else {
+        res.status(400).send({ result: null, message: "Thiếu tham số." });
+      }
+    }
+    
+
+  }
+  
+
+module.exports = new ChonsoController();
