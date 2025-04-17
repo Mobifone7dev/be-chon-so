@@ -152,11 +152,17 @@ class ChonsoController {
 
   async getShopCodeByDistrict(req, res) {
     const { districtCode } = req.query;
+    const { provinceCode } = req.query;
+
     try {
+      // Kiểm tra xem districtCode và provinceCode có tồn tại trong yêu cầu không
+      if (!districtCode || !provinceCode) {
+        return res.status(400).send({ error: "District code and province code are required" });
+      }
       const result = await db.sequelize.query(
-        `SELECT * FROM db01_owner.shop_tcqlkh WHERE DISTRICT= :districtCode`,
+        `SELECT * FROM db01_owner.shop_tcqlkh WHERE DISTRICT= :districtCode AND PROVINCE = :provinceCode`,
         {
-          replacements: { districtCode },
+          replacements: { districtCode , provinceCode},
           type: Sequelize.QueryTypes.SELECT,
         }
       );
