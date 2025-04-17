@@ -5,6 +5,9 @@ const db = require("../models");
 const { sequelize } = require('../models'); // Import sequelize từ nơi đã cấu hình
 
 class ChonsoController {
+  async index(req, res) {
+    res.send({ result: "hello world" });
+  }
   async getValidEmails(req, res) {
     const { email } = req.body;
 
@@ -39,7 +42,7 @@ class ChonsoController {
     }
   }
 
-  async Chonso(req, res) {
+  async chonso(req, res) {
     try {
       const limit = parseInt(req.query.limit) || 10; // Số bản ghi trên mỗi trang
       let search = req.query.search || ""; // Lấy từ khóa tìm kiếm từ query string
@@ -151,7 +154,7 @@ class ChonsoController {
     const { districtCode } = req.query;
     try {
       const result = await db.sequelize.query(
-        `SELECT * FROM db01_owner.shop_tcqlkh WHERE district_code = :districtCode`,
+        `SELECT * FROM db01_owner.shop_tcqlkh WHERE DISTRICT= :districtCode`,
         {
           replacements: { districtCode },
           type: Sequelize.QueryTypes.SELECT,

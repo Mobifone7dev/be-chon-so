@@ -10,7 +10,7 @@ function route(app) {
   });
   app.post("/login", authenticateRouter);
   app.use("/user-role", authenticateToken, userRoleRouter);
-  app.use("/chonso", chonsoRouter);
+  app.use("/chon-so", chonsoRouter);
 }
 function authenticateToken(req, res, next) {
   const authHeader = req.headers["authorization"];
