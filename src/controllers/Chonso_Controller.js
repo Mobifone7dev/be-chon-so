@@ -7,13 +7,13 @@ const { sequelize } = require('../models'); // Import sequelize từ nơi đã c
 class ChonsoController {
   async getValidEmails(req, res) {
     const { email } = req.body;
-  
+
     if (!email) {
       return res.status(400).send({ message: "Email is required" });
     }
-  
+
     console.log("Checking email:", email);
-  
+
     try {
       const [result] = await db.sequelize.query(
         `SELECT email 
@@ -25,9 +25,9 @@ class ChonsoController {
           type: Sequelize.QueryTypes.SELECT,
         }
       );
-  
+
       console.log("SQL Result:", result);
-  
+
       if (result) {
         return res.send({ allowed: true });
       } else {
@@ -38,43 +38,43 @@ class ChonsoController {
       res.status(500).send({ error: "Internal Server Error", details: error.message });
     }
   }
-  
+
   async Chonso(req, res) {
-      try {
-        const limit = parseInt(req.query.limit) || 10; // Số bản ghi trên mỗi trang
-        let search = req.query.search || ""; // Lấy từ khóa tìm kiếm từ query string
-        const type = req.query.type || ""; // Lấy giá trị SPE_NUMBER_TYPE từ query string
-        const shopCodeInput = req.query.shopCode || ""; // Nhận đầu vào từ người dùng
+    try {
+      const limit = parseInt(req.query.limit) || 10; // Số bản ghi trên mỗi trang
+      let search = req.query.search || ""; // Lấy từ khóa tìm kiếm từ query string
+      const type = req.query.type || ""; // Lấy giá trị SPE_NUMBER_TYPE từ query string
+      const shopCodeInput = req.query.shopCode || ""; // Nhận đầu vào từ người dùng
 
-        // Nếu có từ khóa tìm kiếm, thay thế dấu '*' thành '%'
-        if (search) {
-          search = search.replace(/\*/g, "%");
+      // Nếu có từ khóa tìm kiếm, thay thế dấu '*' thành '%'
+      if (search) {
+        search = search.replace(/\*/g, "%");
+      }
+
+      // Thêm điều kiện LIKE vào SQL nếu có từ khóa tìm kiếm
+      let whereCondition = search ? `WHERE a.TEL_NUMBER LIKE '${search}'` : "";
+
+
+      // Thêm điều kiện SPE_NUMBER_TYPE nếu có giá trị 'type'
+      if (type) {
+        if (type === '10') {
+          whereCondition += ` AND a.SPE_NUMBER_TYPE = 'Tự do'`; // Tu do
+        } else if (type >= '1' && type <= '9') {
+          whereCondition += ` AND a.SPE_NUMBER_TYPE = '${type}'`; // Những giá trị từ 1 đến 9
         }
-  
-        // Thêm điều kiện LIKE vào SQL nếu có từ khóa tìm kiếm
-        let whereCondition = search ? `WHERE a.TEL_NUMBER LIKE '${search}'` : "";
+      }
 
-        
-          // Thêm điều kiện SPE_NUMBER_TYPE nếu có giá trị 'type'
-          if (type) {
-            if (type === '10') {
-              whereCondition += ` AND a.SPE_NUMBER_TYPE = 'Tự do'`; // Tu do
-            } else if (type >= '1' && type <= '9') {
-              whereCondition += ` AND a.SPE_NUMBER_TYPE = '${type}'`; // Những giá trị từ 1 đến 9
-            }
-          }
+      // ✅ Chỉ tìm 1 từ khóa trên SHOP_CODE
+      if (shopCodeInput) {
+        const keyword = shopCodeInput
+          .trim()
+          .toUpperCase()
+          .replace(/\s+/g, '%'); // thay tất cả khoảng trắng thành %
 
-          // ✅ Chỉ tìm 1 từ khóa trên SHOP_CODE
-          if (shopCodeInput) {
-            const keyword = shopCodeInput
-              .trim()
-              .toUpperCase()
-              .replace(/\s+/g, '%'); // thay tất cả khoảng trắng thành %
-          
-            whereCondition += ` AND a.SHOP_CODE LIKE '%${keyword}%'`;
-          }
-        // Câu SQL lấy dữ liệu từ cơ sở dữ liệu
-        let sql = `
+        whereCondition += ` AND a.SHOP_CODE LIKE '%${keyword}%'`;
+      }
+      // Câu SQL lấy dữ liệu từ cơ sở dữ liệu
+      let sql = `
         SELECT v1.*, v2.name FROM (  
         SELECT a.TEL_NUMBER, a.HLR_EXISTS, a.SPE_NUMBER_TYPE,
           DECODE(spe_number_type, '1', 'CK1500', '2', 'CK1200', '3', 'CK1000', '4', 'CK800',
@@ -85,13 +85,13 @@ class ChonsoController {
           AND ROWNUM <= ${limit} 
           ) v1 left join db01_owner.shop_tcqlkh v2 on v1.shop_code = v2.shop_code order by v1.tel_number asc
         `;
-        
-        console.log("Generated SQL:", sql); // Debug câu SQL để kiểm tra
-  
-        // Thực thi câu SQL
-        DbWebsiteConnection.getConnected(sql, {}, function (result) {
-          if (result) {
-            // Chuyển đổi CHANGE_DATETIME sang định dạng ngày tháng năm
+
+      console.log("Generated SQL:", sql); // Debug câu SQL để kiểm tra
+
+      // Thực thi câu SQL
+      DbWebsiteConnection.getConnected(sql, {}, function (result) {
+        if (result) {
+          // Chuyển đổi CHANGE_DATETIME sang định dạng ngày tháng năm
           const formattedResult = result.map(item => {
             // Kiểm tra nếu có CHANGE_DATETIME và định dạng lại
             if (item.CHANGE_DATETIME) {
@@ -106,55 +106,73 @@ class ChonsoController {
           });
 
           res.send({ result: formattedResult, limit: limit });
-          } else {
-            res.status(404).send({ message: "No data found." }); // Trả về lỗi nếu không có dữ liệu
-          }
-        });
-      } catch (error) {
-        console.error("Database Query Error:", error); // Log lỗi nếu có
-        res.status(500).send({ error: "Internal Server Error" }); // Trả về lỗi server
-      }
-    }
-
-    async insertChonso(req, res) {
-      const { email, isdn } = req.body;
-      const ip_address =
-      (req.headers["x-forwarded-for"] && req.headers["x-forwarded-for"].split(",")[0].trim()) ||
-      req.connection?.remoteAddress ||
-      req.socket?.remoteAddress ||
-      req.connection?.socket?.remoteAddress;
-    
-    console.log("IP client:", ip_address);
-
-      console.log("Body nhận được:", req.body); // 👈 In thử ra
-      console.log("IP client:", ip_address);
-
-
-      if (email && isdn) {
-        const result = await DbWebsiteConnection.insertChonSo(email, isdn, ip_address);
-        let message;
-    
-        switch (result) {
-          case 1:
-            message = "Insert thành công.";
-            break;
-          case 2:
-            message = "User không thuộc shop_code nào.";
-            break;
-          case 0:
-          default:
-            message = "Đã xảy ra lỗi khi chọn số ==.";
-            break;
+        } else {
+          res.status(404).send({ message: "No data found." }); // Trả về lỗi nếu không có dữ liệu
         }
-    
-        res.send({ result, message });
-      } else {
-        res.status(400).send({ result: null, message: "Thiếu tham số." });
-      }
+      });
+    } catch (error) {
+      console.error("Database Query Error:", error); // Log lỗi nếu có
+      res.status(500).send({ error: "Internal Server Error" }); // Trả về lỗi server
     }
-    
-
   }
-  
+
+  async insertChonso(req, res) {
+    const { in_hoten_kh, in_cccd_kh, in_tinh_kh, in_huyen_kh, in_diachi_kh, in_ip, in_shop_code, in_ma_gs, in_isdn } = req.body;
+    console.log("Body nhận được:", req.body); // 👈 In thử ra
+    if (in_hoten_kh && in_cccd_kh && in_tinh_kh && in_huyen_kh && in_diachi_kh && in_shop_code && in_isdn && in_ip && in_ma_gs) {
+      const result = await DbWebsiteConnection.insertChonSo(in_hoten_kh, in_cccd_kh, in_tinh_kh, in_huyen_kh, in_diachi_kh, in_shop_code, in_isdn, in_ip, in_ma_gs);
+      let message;
+
+      switch (result) {
+        case 1:
+          message = "Insert thành công.";
+          break;
+        case 2:
+          message = "Số thuê bao đã có người chọn";
+          break;
+        case 3:
+          message = "CCCD/Passport này đang giữ thuê bao";
+          break;
+        case 4:
+          message = "Số thuê bao đang sử dụng"
+        case 0:
+        default:
+          message = "Đã xảy ra lỗi khi chọn số ==.";
+          break;
+      }
+
+      res.send({ result, message });
+    } else {
+      res.status(400).send({ result: null, message: "Thiếu tham số." });
+    }
+  }
+
+  async getShopCodeByDistrict(req, res) {
+    const { districtCode } = req.query;
+    try {
+      const result = await db.sequelize.query(
+        `SELECT * FROM db01_owner.shop_tcqlkh WHERE district_code = :districtCode`,
+        {
+          replacements: { districtCode },
+          type: Sequelize.QueryTypes.SELECT,
+        }
+      );
+
+      console.log("SQL Result:", result);
+
+      if (result) {
+        return res.send({ data: result });
+      } else {
+        res.status(500).send({ error: "Internal Server Error", details: error.message });
+      }
+    } catch (error) {
+      console.error("Error checking email permission:", error);
+      res.status(500).send({ error: "Internal Server Error", details: error.message });
+    }
+  }
+
+
+}
+
 
 module.exports = new ChonsoController();
