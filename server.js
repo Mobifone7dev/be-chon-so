@@ -10,9 +10,7 @@ const hsts = require('hsts')
 const helmet = require('helmet');
 const app = express();
 const PORT = 8106;
-var certificate = fs.readFileSync('/usr/local/ssl/certificate/tracuu7/cert_tracuu7_161024.crt');
-var privateKey = fs.readFileSync('/usr/local/ssl/certificate/tracuu7/private_tracuu7.key');
-require('dotenv').config();
+
 app.use(cors());
 app.use(morgan("combined"));
 app.use(
@@ -25,7 +23,13 @@ console.log(
   "check", process.env.DB, process.env.USER_WEBSITE, process.env.PASSWORD_WEBSITE
 )
 const route = require("./src/routes");
+app.use("/public", express.static(path.join(__dirname, "public")));
 route(app);
+
+// -----production-----
+var certificate = fs.readFileSync('/usr/local/ssl/certificate/tracuu7/cert_tracuu7_161024.crt');
+var privateKey = fs.readFileSync('/usr/local/ssl/certificate/tracuu7/private_tracuu7.key');
+require('dotenv').config();
 app.use(hsts({
   maxAge: 15552000  // 180 days in seconds
 }))
@@ -78,12 +82,13 @@ app.use(helmet.contentSecurityPolicy(cspConfig));
 
 
 
-app.use("/public", express.static(path.join(__dirname, "public")));
 process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0"
 https.createServer({
   key: privateKey,
   cert: certificate
 }, app).listen(PORT)
 
+console.log("Server is running on port: ", PORT);
+//-----development-----
 // app.listen(PORT);
 

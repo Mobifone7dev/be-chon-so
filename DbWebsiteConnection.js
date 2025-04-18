@@ -101,6 +101,48 @@ async function execute(isdn) {
     }
   }
 }
+async function insertChonso(in_hoten_kh, in_cccd_kh, in_tinh_kh, in_huyen_kh, in_diachi_kh, in_shop_code, in_isdn, in_ip, in_ma_gs) {
+  // Kiểm tra xem các biến có giá trị hợp lệ không
+  let connection;
+  try {
+    connection = await oracledb.getConnection({
+      user: process.env.USER_WEBSITE,
+      password: process.env.PASSWORD_WEBSITE,
+      connectString: process.env.CONNECT_STRING_WEBSITE,
+    });
+
+    let bindvars = {
+      in_hoten_kh: in_hoten_kh,
+      in_cccd_kh: in_cccd_kh,
+      in_tinh_kh: in_tinh_kh,
+      in_huyen_kh: in_huyen_kh,
+      in_diachi_kh: in_diachi_kh,
+      in_shop_code: in_shop_code,
+      in_isdn: in_isdn,
+      in_ip: in_ip,
+      in_ma_gs: in_ma_gs,
+      result: { dir: oracledb.BIND_OUT, type: oracledb.NUMBER },
+    };
+
+    const result = await connection.execute(
+      `BEGIN :result := liennguyen1_owner.f_insert_chonso_alter(:in_hoten_kh, :in_cccd_kh, :in_tinh_kh, :in_huyen_kh, :in_diachi_kh,:in_shop_code,:in_isdn, :in_ip,:in_ma_gs ); END;`,
+      bindvars
+    );
+
+    return result.outBinds.result;
+  } catch (err) {
+    console.error(err);
+    return null;
+  } finally {
+    if (connection) {
+      try {
+        await connection.close();
+      } catch (err) {
+        console.error(err);
+      }
+    }
+  }
+}
 
 async function checkType(isdn) {
   let connection;
@@ -142,5 +184,6 @@ function doRelease(connection) {
   });
 }
 module.exports.getConnected = getConnected;
+module.exports.insertChonso = insertChonso;
 module.exports.execute = execute;
 module.exports.checkType = checkType;

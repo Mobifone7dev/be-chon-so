@@ -127,30 +127,38 @@ class ChonsoController {
     const { in_hoten_kh, in_cccd_kh, in_tinh_kh, in_huyen_kh, in_diachi_kh, in_ip, in_shop_code, in_ma_gs, in_isdn } = req.body;
     console.log("Body nhận được:", req.body); // 👈 In thử ra
     if (in_hoten_kh && in_cccd_kh && in_tinh_kh && in_huyen_kh && in_diachi_kh && in_shop_code && in_isdn && in_ip && in_ma_gs) {
-      const result = await DbWebsiteConnection.insertChonSo(in_hoten_kh, in_cccd_kh, in_tinh_kh, in_huyen_kh, in_diachi_kh, in_shop_code, in_isdn, in_ip, in_ma_gs);
+      const result = await DbWebsiteConnection.insertChonso(in_hoten_kh, in_cccd_kh, in_tinh_kh, in_huyen_kh, in_diachi_kh, in_shop_code, in_isdn, in_ip, in_ma_gs);
       let message;
-
+      let code = 0;
       switch (result) {
         case 1:
           message = "Insert thành công.";
+          code = 1;
           break;
         case 2:
           message = "Số thuê bao đã có người chọn";
+          code = 0;
           break;
         case 3:
           message = "CCCD/Passport này đang giữ thuê bao";
+          code = 0;
+
           break;
         case 4:
           message = "Số thuê bao đang sử dụng"
+          code = 0;
+
         case 0:
         default:
-          message = "Đã xảy ra lỗi khi chọn số ==.";
+          message = "Đã xảy ra lỗi khi chọn số!";
+          code = 0;
+
           break;
       }
 
-      res.send({ result, message });
+      res.send({ result, message, code });
     } else {
-      res.status(400).send({ result: null, message: "Thiếu tham số." });
+      res.status(400).send({ result: null, message: "Thiếu tham số.", code });
     }
   }
 
