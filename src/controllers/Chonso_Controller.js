@@ -47,7 +47,6 @@ class ChonsoController {
       const limit = parseInt(req.query.limit) || 10; // Số bản ghi trên mỗi trang
       let search = req.query.search || ""; // Lấy từ khóa tìm kiếm từ query string
       const type = req.query.type || ""; // Lấy giá trị SPE_NUMBER_TYPE từ query string
-      const shopCodeInput = req.query.shopCode || ""; // Nhận đầu vào từ người dùng
 
       // Nếu có từ khóa tìm kiếm, thay thế dấu '*' thành '%'
       if (search) {
@@ -66,29 +65,34 @@ class ChonsoController {
           whereCondition += ` AND a.SPE_NUMBER_TYPE = '${type}'`; // Những giá trị từ 1 đến 9
         }
       }
-
-      // ✅ Chỉ tìm 1 từ khóa trên SHOP_CODE
-      if (shopCodeInput) {
-        const keyword = shopCodeInput
-          .trim()
-          .toUpperCase()
-          .replace(/\s+/g, '%'); // thay tất cả khoảng trắng thành %
-
-        whereCondition += ` AND a.SHOP_CODE LIKE '%${keyword}%'`;
-      }
       // Câu SQL lấy dữ liệu từ cơ sở dữ liệu
-      let sql = `
-        SELECT v1.*, v2.name FROM (  
-        SELECT a.TEL_NUMBER, a.HLR_EXISTS, a.SPE_NUMBER_TYPE,
-          DECODE(spe_number_type, '1', 'CK1500', '2', 'CK1200', '3', 'CK1000', '4', 'CK800',
-         '5', 'CK500', '6', 'CK400', '7', 'CK300', '8', 'CK250', '9', 'CK150', '10', 'Tự do', 'KXD') loai_ck, a.SHOP_CODE, a.CHANGE_DATETIME
-          FROM v_kho_so_all a
-          ${whereCondition}
-          AND hlr_exists in (1,3) 
-          AND ROWNUM <= ${limit} 
-          ) v1 left join db01_owner.shop_tcqlkh v2 on v1.shop_code = v2.shop_code order by v1.tel_number asc
-        `;
+      // let sql = `
+      //   SELECT v1.*, v2.name FROM (  
+      //   SELECT a.TEL_NUMBER, a.HLR_EXISTS, a.SPE_NUMBER_TYPE,
+      //     DECODE(spe_number_type, '1', 'CK1500', '2', 'CK1200', '3', 'CK1000', '4', 'CK800',
+      //    '5', 'CK500', '6', 'CK400', '7', 'CK300', '8', 'CK250', '9', 'CK150', '10', 'Tự do', 'KXD') loai_ck, a.SHOP_CODE, a.CHANGE_DATETIME
+      //     FROM v_kho_so_all a
+      //     ${whereCondition}
+      //     AND hlr_exists in (1,3) 
+      //     AND ROWNUM <= ${limit} 
+      //     ) v1 left join db01_owner.shop_tcqlkh v2 on v1.shop_code = v2.shop_code order by v1.tel_number asc
+      //   `;
 
+      let sql = `
+        ELECT v1.tel_number, v1.SPE_NUMBER_TYPE, v1.loai_ck, v1.SHOP_CODE, v1.CHANGE_DATETIME, nvl(v2.is_hold,v1.is_hold) is_hold FROM (  
+        SELECT a.TEL_NUMBER, a.SPE_NUMBER_TYPE,
+          DECODE(spe_number_type, '1', 'CK1500', '2', 'CK1200', '3', 'CK1000', '4', 'CK800',
+         '5', 'CK500', '6', 'CK400', '7', 'CK300', '8', 'CK250', '9', 'CK150', '10', 'Tự do', 'KXD') loai_ck, a.SHOP_CODE, a.CHANGE_DATETIME, '0' is_hold
+          FROM v_kho_so_all a
+          where CHANGE_DATETIME < sysdate - 31
+          ${whereCondition} 
+          AND hlr_exists in (1,3) 
+          and a.tel_number not like '12%'
+          AND ROWNUM <= 100 order by SPE_NUMBER_TYPE desc, tel_number
+          ) v1 left join ( select a.isdn tel_number, '1' is_hold from liennguyen1_owner.booking_number a where a.start_time >= sysdate - 1 ) v2 on v1.TEL_NUMBER = v2.TEL_NUMBER
+          where not exists ( select 1 from db01_owner.forbiden_subscriber_tcqlkh b where v1.TEL_NUMBER = b.isdn )
+          order by v1.SPE_NUMBER_TYPE, v1.TEL_NUMBER
+        `;
       console.log("Generated SQL:", sql); // Debug câu SQL để kiểm tra
 
       // Thực thi câu SQL
@@ -162,7 +166,7 @@ class ChonsoController {
       const result = await db.sequelize.query(
         `SELECT * FROM db01_owner.shop_tcqlkh WHERE DISTRICT= :districtCode AND PROVINCE = :provinceCode`,
         {
-          replacements: { districtCode , provinceCode},
+          replacements: { districtCode, provinceCode },
           type: Sequelize.QueryTypes.SELECT,
         }
       );
