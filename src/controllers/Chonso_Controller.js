@@ -54,7 +54,7 @@ class ChonsoController {
       }
 
       // Thêm điều kiện LIKE vào SQL nếu có từ khóa tìm kiếm
-      let whereCondition = search ? `WHERE a.TEL_NUMBER LIKE '${search}'` : "";
+      let whereCondition = search ? `and a.TEL_NUMBER LIKE '${search}'` : "";
 
 
       // Thêm điều kiện SPE_NUMBER_TYPE nếu có giá trị 'type'
