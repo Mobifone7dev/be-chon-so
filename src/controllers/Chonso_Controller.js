@@ -142,17 +142,16 @@ class ChonsoController {
         case 3:
           message = "CCCD/Passport này đang giữ thuê bao";
           code = 0;
-
           break;
         case 4:
           message = "Số thuê bao đang sử dụng"
           code = 0;
-
-        case 0:
+        case 5:
+          message = "Cửa hàng không tồn tại"
+          code = 0;
         default:
           message = "Đã xảy ra lỗi khi chọn số!";
           code = 0;
-
           break;
       }
 
