@@ -124,40 +124,62 @@ class ChonsoController {
   }
 
   async insertChonso(req, res) {
-    const { in_hoten_kh, in_cccd_kh, in_tinh_kh, in_huyen_kh, in_diachi_kh, in_ip, in_shop_code, in_ma_gs, in_isdn } = req.body;
+    const { in_hoten_kh, in_cccd_kh, in_tinh_kh, in_huyen_kh, in_diachi_kh, in_ip, in_shop_code, in_isdn } = req.body;
     console.log("Body nhận được:", req.body); // 👈 In thử ra
-    if (in_hoten_kh && in_cccd_kh && in_tinh_kh && in_huyen_kh && in_diachi_kh && in_shop_code && in_isdn && in_ip && in_ma_gs) {
-      const result = await DbWebsiteConnection.insertChonso(in_hoten_kh, in_cccd_kh, in_tinh_kh, in_huyen_kh, in_diachi_kh, in_shop_code, in_isdn, in_ip, in_ma_gs);
-      let message;
-      let code = 0;
-      switch (result) {
-        case 1:
-          message = "Insert thành công.";
-          code = 1;
-          break;
-        case 2:
-          message = "Số thuê bao đã có người chọn";
-          code = 0;
-          break;
-        case 3:
-          message = "CCCD/Passport này đang giữ thuê bao";
-          code = 0;
-          break;
-        case 4:
-          message = "Số thuê bao đang sử dụng"
-          code = 0;
-        case 5:
-          message = "Cửa hàng không tồn tại"
-          code = 0;
-        default:
-          message = "Đã xảy ra lỗi khi chọn số!";
-          code = 0;
-          break;
+    if (in_hoten_kh && in_cccd_kh && in_tinh_kh && in_huyen_kh && in_diachi_kh && in_shop_code && in_isdn && in_ip) {
+
+      const now = new Date();
+
+      const seconds = String(now.getSeconds()).padStart(2, '0');
+      const minutes = String(now.getMinutes()).padStart(2, '0');
+      const hours = String(now.getHours()).padStart(2, '0');
+
+      const day = String(now.getDate()).padStart(2, '0');
+      const month = String(now.getMonth() + 1).padStart(2, '0'); // tháng bắt đầu từ 0
+      const year = now.getFullYear();
+
+      const formatted = `${seconds}${minutes}${hours}${day}${month}${year}`;
+      const in_ma_gs = "GS" + formatted;
+      try {
+        const result = await DbWebsiteConnection.insertChonso(in_hoten_kh, in_cccd_kh, in_tinh_kh, in_huyen_kh, in_diachi_kh, in_shop_code, in_isdn, in_ip, in_ma_gs);
+        let message;
+        let code = 0;
+        switch (result) {
+          case 1:
+            message = "Insert thành công.";
+            code = 1;
+            break;
+          case 2:
+            message = "Số thuê bao đã có người chọn";
+            code = 0;
+            break;
+          case 3:
+            message = "CCCD/Passport này đang giữ thuê bao";
+            code = 0;
+            break;
+          case 4:
+            message = "Số thuê bao đang sử dụng"
+            code = 0;
+          case 5:
+            message = "Cửa hàng không tồn tại"
+            code = 0;
+          case 6:
+            message = "CCCD/Passport này đã từng chọn số này. Không cho chọn lần thứ 2"
+            code = 0;
+          default:
+            message = "Đã xảy ra lỗi khi chọn số!";
+            code = 0;
+            break;
+        }
+        res.send({ result, message, code, codeGS: in_ma_gs });
+      } catch (error) {
+        console.error("Error:", error); // Log lỗi nếu có
+        res.status(500).send({ error: "Internal Server Error" }); // Trả về lỗi server
+
       }
 
-      res.send({ result, message, code });
     } else {
-      res.status(400).send({ result: null, message: "Thiếu tham số.", code });
+      res.status(400).send({ result: null, message: "Thiếu tham số.", code: code, codeGS: in_ma_gs },);
     }
   }
 
