@@ -158,13 +158,13 @@ class ChonsoController {
             code = 0;
             break;
           case 4:
-            message = "Số thuê bao đang sử dụng"
+            message = "Số thuê bao đang sử dụng";
             code = 0;
           case 5:
-            message = "Cửa hàng không tồn tại"
+            message = "Cửa hàng không tồn tại";
             code = 0;
           case 6:
-            message = "CCCD/Passport này đã từng chọn số này. Không cho chọn lần thứ 2"
+            message = "CCCD/Passport này đã từng chọn số này. Không cho chọn lần thứ 2";
             code = 0;
           default:
             message = "Đã xảy ra lỗi khi chọn số!";
