@@ -169,6 +169,14 @@ class ChonsoController {
             message = "CCCD/Passport này đã từng chọn số này. Không cho chọn lần thứ 2";
             code = 0;
             break;
+          case 7:
+            message = "Không thể đấu nối thuê bao từ CK300 trở đi";
+            code = 0;
+            break;
+          case 8:
+            message = "Số dang được giữ để khôi phục số. Liên hệ phòng CSKH";
+            code = 0;
+            break;
           default:
             message = "Đã xảy ra lỗi khi chọn số!";
             code = 0;
