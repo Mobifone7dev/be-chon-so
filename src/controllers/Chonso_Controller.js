@@ -154,7 +154,7 @@ class ChonsoController {
             code = 0;
             break;
           case 3:
-            message = "CCCD/Passport này đang giữ thuê bao";
+            message = "CCCD/Passport này chỉ được giữ tối đa 3 thuê bao";
             code = 0;
             break;
           case 4:
