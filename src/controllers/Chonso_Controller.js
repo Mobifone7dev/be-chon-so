@@ -88,6 +88,7 @@ class ChonsoController {
           ${whereCondition} 
           AND hlr_exists in (1,3) 
           and a.tel_number not like '12%'
+          and a.tel_number not like '905000%'
           AND ROWNUM <= 100 order by SPE_NUMBER_TYPE desc, tel_number
           ) v1 left join ( select a.isdn tel_number, '1' is_hold from liennguyen1_owner.booking_number a where a.start_time >= sysdate - 1 ) v2 on v1.TEL_NUMBER = v2.TEL_NUMBER
           where not exists ( select 1 from db01_owner.forbiden_subscriber_tcqlkh b where v1.TEL_NUMBER = b.isdn )
