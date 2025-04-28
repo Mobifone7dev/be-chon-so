@@ -79,10 +79,10 @@ class ChonsoController {
       //   `;
 
       let sql = `
-        SELECT v1.tel_number, v1.SPE_NUMBER_TYPE, v1.loai_ck, v1.SHOP_CODE, v1.CHANGE_DATETIME, nvl(v2.is_hold,v1.is_hold) is_hold FROM (  
+        SELECT v1.tel_number, v1.SPE_NUMBER_TYPE, v1.loai_ck, v1.CHANGE_DATETIME, nvl(v2.is_hold,v1.is_hold) is_hold FROM (  
         SELECT a.TEL_NUMBER, a.SPE_NUMBER_TYPE,
           DECODE(spe_number_type, '1', 'CK1500', '2', 'CK1200', '3', 'CK1000', '4', 'CK800',
-         '5', 'CK500', '6', 'CK400', '7', 'CK300', '8', 'CK250', '9', 'CK150', '10', 'Tự do', 'KXD') loai_ck, a.SHOP_CODE, a.CHANGE_DATETIME, '0' is_hold
+         '5', 'CK500', '6', 'CK400', '7', 'CK300', '8', 'CK250', '9', 'CK150', '10', 'Tự do', 'KXD') loai_ck, a.CHANGE_DATETIME, '0' is_hold
           FROM v_kho_so_all a
           where CHANGE_DATETIME < sysdate - 31
           ${whereCondition} 
