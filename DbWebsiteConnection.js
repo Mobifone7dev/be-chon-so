@@ -101,7 +101,7 @@ async function execute(isdn) {
     }
   }
 }
-async function insertChonso(in_hoten_kh, in_cccd_kh, in_tinh_kh, in_huyen_kh, in_diachi_kh, in_shop_code, in_isdn, in_ip, in_ma_gs) {
+async function insertChonso(in_hoten_kh, in_cccd_kh, in_tinh_kh, in_huyen_kh, in_diachi_kh, in_shop_code, in_isdn, in_ip, in_ma_gs, in_is_ha_ck = 0, in_link_phieu = null) {
   // Kiểm tra xem các biến có giá trị hợp lệ không
   let connection;
   try {
@@ -121,11 +121,13 @@ async function insertChonso(in_hoten_kh, in_cccd_kh, in_tinh_kh, in_huyen_kh, in
       in_isdn: in_isdn,
       in_ip: in_ip,
       in_ma_gs: in_ma_gs,
+      in_is_ha_ck: in_is_ha_ck,
+      in_link_phieu: in_link_phieu,
       result: { dir: oracledb.BIND_OUT, type: oracledb.NUMBER },
     };
 
     const result = await connection.execute(
-      `BEGIN :result := liennguyen1_owner.f_insert_chonso_alter(:in_hoten_kh, :in_cccd_kh, :in_tinh_kh, :in_huyen_kh, :in_diachi_kh,:in_shop_code,:in_isdn, :in_ip,:in_ma_gs ); END;`,
+      `BEGIN :result := liennguyen1_owner.f_insert_chonso_alter(:in_hoten_kh, :in_cccd_kh, :in_tinh_kh, :in_huyen_kh, :in_diachi_kh,:in_shop_code,:in_isdn, :in_ip,:in_ma_gs, :in_is_ha_ck, :in_link_phieu ); END;`,
       bindvars
     );
 

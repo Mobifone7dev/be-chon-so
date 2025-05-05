@@ -125,7 +125,7 @@ class ChonsoController {
   }
 
   async insertChonso(req, res) {
-    const { in_hoten_kh, in_cccd_kh, in_tinh_kh, in_huyen_kh, in_diachi_kh, in_ip, in_shop_code, in_isdn } = req.body;
+    const { in_hoten_kh, in_cccd_kh, in_tinh_kh, in_huyen_kh, in_diachi_kh, in_ip, in_shop_code, in_isdn, in_is_ha_ck, in_link_phieu } = req.body;
     console.log("Body nhận được:", req.body); // 👈 In thử ra
     if (in_hoten_kh && in_cccd_kh && in_tinh_kh && in_huyen_kh && in_diachi_kh && in_shop_code && in_isdn && in_ip) {
 
@@ -142,7 +142,7 @@ class ChonsoController {
       const formatted = `${seconds}${minutes}${hours}${day}${month}${year}`;
       const in_ma_gs = "GS" + formatted;
       try {
-        const result = await DbWebsiteConnection.insertChonso(in_hoten_kh, in_cccd_kh, in_tinh_kh, in_huyen_kh, in_diachi_kh, in_shop_code, in_isdn, in_ip, in_ma_gs);
+        const result = await DbWebsiteConnection.insertChonso(in_hoten_kh, in_cccd_kh, in_tinh_kh, in_huyen_kh, in_diachi_kh, in_shop_code, in_isdn, in_ip, in_ma_gs, in_is_ha_ck ? in_is_ha_ck : 0, in_link_phieu ? in_link_phieu : null);
         let message;
         let code = 0;
         switch (result) {
