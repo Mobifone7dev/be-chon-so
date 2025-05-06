@@ -5,7 +5,7 @@
 /.pnp
 .pnp.js
 .vscode
-/public/sale-point-upload
+/public
 
 # testing
 /coverage
