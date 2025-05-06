@@ -225,7 +225,19 @@ class ChonsoController {
       res.status(500).send({ error: "Internal Server Error", details: error.message });
     }
   }
-
+  async uploadFile(req, res) {
+    try {
+      const file = req.file;
+      if (!file) {
+        return res.status(400).send({ message: "No file uploaded" });
+      }
+      console.log("File uploaded:", file);
+      res.send({ message: "File uploaded successfully", filePath: file.path });
+    } catch (error) {
+      console.error("Error uploading file:", error);
+      res.status(500).send({ error: "Internal Server Error" });
+    }
+  }
 
 }
 
