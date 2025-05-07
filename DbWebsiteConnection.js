@@ -127,7 +127,7 @@ async function insertChonso(in_hoten_kh, in_cccd_kh, in_tinh_kh, in_huyen_kh, in
     };
 
     const result = await connection.execute(
-      `BEGIN :result := liennguyen1_owner.f_insert_chonso_test(:in_hoten_kh, :in_cccd_kh, :in_tinh_kh, :in_huyen_kh, :in_diachi_kh,:in_shop_code,:in_isdn, :in_ip,:in_ma_gs, :in_is_ha_ck, :in_link_phieu ); END;`,
+      `BEGIN :result := liennguyen1_owner.f_insert_chonso_alter(:in_hoten_kh, :in_cccd_kh, :in_tinh_kh, :in_huyen_kh, :in_diachi_kh,:in_shop_code,:in_isdn, :in_ip,:in_ma_gs, :in_is_ha_ck, :in_link_phieu ); END;`,
       bindvars
     );
 
