@@ -176,7 +176,7 @@ class ChonsoController {
             code = 0;
             break;
           case 8:
-            message = "Số dang được giữ để khôi phục số. Liên hệ phòng CSKH";
+            message = "Số Cam kết Tổng công ty - không được chọn";
             code = 0;
             break;
           default:
