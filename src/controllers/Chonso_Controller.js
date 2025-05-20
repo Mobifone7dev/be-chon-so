@@ -104,7 +104,7 @@ class ChonsoController {
         res.send({ result: result.hits.hits, limit: limit });
 
       } else {
-        res.status(404).send({ message: "No data found.", result: [] }); // Trả về lỗi nếu không có dữ liệu
+        res.status(200).send({ message: "No data found.", result: [] }); // Trả về lỗi nếu không có dữ liệu
       }
     } catch (err) {
       console.error('❌ Lỗi khi query:', err);
