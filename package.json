@@ -23,7 +23,8 @@
     "oracledb": "^5.5.0",
     "scss": "^0.2.4",
     "sequelize": "^6.37.5",
-    "sequelize-cli": "^6.6.2"
+    "sequelize-cli": "^6.6.2",
+    "@elastic/elasticsearch": "^8.18.2"
   },
   "keywords": [],
   "author": "",

@@ -3,11 +3,32 @@ var Sequelize = require("sequelize");
 const DbWebsiteConnection = require("../../DbWebsiteConnection");
 const db = require("../models");
 const { sequelize } = require('../models'); // Import sequelize từ nơi đã cấu hình
-
+const { Client } = require('@elastic/elasticsearch');
+require('dotenv').config(); // Đọc biến môi trường từ .env
+const client = new Client({
+  node: process.env.ELASTIC_NODE,
+  auth: {
+    username: process.env.ELASTIC_USER,
+    password: process.env.ELASTIC_PASSWORD
+  },
+  tls: {
+    rejectUnauthorized: false  // Bỏ kiểm tra SSL nếu dùng self-signed cert
+  }
+});
 class ChonsoController {
   async index(req, res) {
     res.send({ result: "hello world" });
   }
+  async checkConnection() {
+    try {
+      const response = await client.info();
+      console.dir(response, { depth: null });
+      console.log("BODY:", response);
+    } catch (err) {
+      console.error("Lỗi kết nối:", err.meta?.body || err);
+    }
+  }
+
   async getValidEmails(req, res) {
     const { email } = req.body;
 
@@ -41,6 +62,57 @@ class ChonsoController {
       res.status(500).send({ error: "Internal Server Error", details: error.message });
     }
   }
+
+  async searchCondition(req, res) {
+    const limit = parseInt(req.query.limit) || 10; // Số bản ghi trên mỗi trang
+    let search = req.query.search || ""; // Lấy từ khóa tìm kiếm từ query string
+    const type = req.query.type || null; // Lấy giá trị SPE_NUMBER_TYPE từ query string
+
+    console.log('search', search);
+    console.log('typeNumber', type);
+
+    const mustQuery = [
+      {
+        wildcard: {
+          'tel_number_key.keyword': {
+            value: search
+          }
+        }
+      }
+    ];
+
+    if (type) {
+      mustQuery.push({
+        term: {
+          'spe_number_type.keyword': type
+        }
+      });
+    }
+    try {
+      const result = await client.search({
+        index: "chonso7",
+        query: {
+          bool: {
+            must: mustQuery
+          }
+        },
+        size: limit  // Số lượng kết quả trả về (mặc định chỉ là 10)
+      });
+
+      console.log('📦 Kết quả:', result.hits.hits);
+      if (result.hits.hits.length > 0) {
+        res.send({ result: result.hits.hits, limit: limit });
+
+      } else {
+        res.status(404).send({ message: "No data found.", result: [] }); // Trả về lỗi nếu không có dữ liệu
+      }
+    } catch (err) {
+      console.error('❌ Lỗi khi query:', err);
+      res.status(500).send({ error: "Internal Server Error" }); // Trả về lỗi server
+
+    }
+  }
+
 
   async chonso(req, res) {
     try {
