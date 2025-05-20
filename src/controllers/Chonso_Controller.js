@@ -267,7 +267,12 @@ class ChonsoController {
       res.status(400).send({ result: null, message: "Thiếu tham số.", code: code, codeGS: in_ma_gs },);
     }
   }
-  async updateIsHoldByTelNumber(telNumberKey, newValue) {
+  async updateIsHoldByTelNumber(req, res) {
+    const { telNumberKey, newValue } = req.body;
+    console.log("Cập nhật is_hold cho số:", telNumberKey, "với giá trị mới:", newValue);
+    if (!telNumberKey || newValue === undefined) {
+      return res.status(400).send({ error: "Thiếu tham số telNumberKey hoặc newValue" });
+    }
     try {
       const result = await client.updateByQuery({
         index: 'chonso7',
