@@ -290,6 +290,7 @@ class ChonsoController {
       res.status(200).send({ message: 'Cập nhật is_hold số thành công' });
       console.log('✅ Kết quả cập nhật:', result);
     } catch (err) {
+      res.status(500).send({ error: 'Lỗi khi cập nhật is_hold số', error: err });
       console.error('❌ Lỗi khi cập nhật:', err);
     }
   }
