@@ -267,6 +267,32 @@ class ChonsoController {
       res.status(400).send({ result: null, message: "Thiếu tham số.", code: code, codeGS: in_ma_gs },);
     }
   }
+  async updateIsHoldByTelNumber(telNumberKey, newValue) {
+    try {
+      const result = await client.updateByQuery({
+        index: 'chonso7',
+        refresh: true,
+        body: {
+          script: {
+            source: 'ctx._source.is_hold = params.newValue',
+            lang: 'painless',
+            params: {
+              newValue: newValue
+            }
+          },
+          query: {
+            term: {
+              'tel_number_key.keyword': telNumberKey
+            }
+          }
+        }
+      });
+      res.status(200).send({ message: 'Cập nhật is_hold số thành công' });
+      console.log('✅ Kết quả cập nhật:', result);
+    } catch (err) {
+      console.error('❌ Lỗi khi cập nhật:', err);
+    }
+  }
 
   async getShopCodeByDistrict(req, res) {
     const { districtCode } = req.query;

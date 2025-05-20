@@ -5,6 +5,7 @@ const multer = require("multer");
 const path = require("path");
 const fs = require("fs");
 // Định nghĩa route cho Chonso
+router.post("/update-is-hold", chonsoController.updateIsHoldByTelNumber)
 router.post("/permission", chonsoController.getValidEmails)
 router.post("/insertChonSo", chonsoController.insertChonso)
 router.get("/get-shopcode-by-district", chonsoController.getShopCodeByDistrict); // Route lấy mã shop theo quận huyện
