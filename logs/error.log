@@ -1,0 +1,4 @@
+error: (node:112064) [SEQUELIZE0004] DeprecationWarning: A boolean value was passed to options.operatorsAliases. This is a no-op with v5 and should be removed.
+(Use `node --trace-deprecation ...` to show where the warning was created) {"timestamp":"2025-05-26T02:51:29.727Z"}
+error: (node:112368) [SEQUELIZE0004] DeprecationWarning: A boolean value was passed to options.operatorsAliases. This is a no-op with v5 and should be removed.
+(Use `node --trace-deprecation ...` to show where the warning was created) {"timestamp":"2025-05-26T02:52:33.773Z"}

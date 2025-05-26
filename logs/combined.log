@@ -1,0 +1,16 @@
+info: check    {"timestamp":"2025-05-26T02:51:29.082Z"}
+info: process chonso7_owner {"timestamp":"2025-05-26T02:51:29.355Z"}
+error: (node:112064) [SEQUELIZE0004] DeprecationWarning: A boolean value was passed to options.operatorsAliases. This is a no-op with v5 and should be removed.
+(Use `node --trace-deprecation ...` to show where the warning was created) {"timestamp":"2025-05-26T02:51:29.727Z"}
+info: Executing (default): SELECT 1+1 AS result FROM DUAL {"timestamp":"2025-05-26T02:51:32.651Z"}
+info: Executing (default): SELECT 1+1 AS result FROM DUAL {"timestamp":"2025-05-26T02:51:32.675Z"}
+info: connected.. {"timestamp":"2025-05-26T02:51:32.677Z"}
+info: yes re-sync done! {"timestamp":"2025-05-26T02:51:32.698Z"}
+info: check    {"timestamp":"2025-05-26T02:52:33.126Z"}
+info: process chonso7_owner {"timestamp":"2025-05-26T02:52:33.403Z"}
+error: (node:112368) [SEQUELIZE0004] DeprecationWarning: A boolean value was passed to options.operatorsAliases. This is a no-op with v5 and should be removed.
+(Use `node --trace-deprecation ...` to show where the warning was created) {"timestamp":"2025-05-26T02:52:33.773Z"}
+info: Executing (default): SELECT 1+1 AS result FROM DUAL {"timestamp":"2025-05-26T02:52:34.626Z"}
+info: Executing (default): SELECT 1+1 AS result FROM DUAL {"timestamp":"2025-05-26T02:52:34.649Z"}
+info: connected.. {"timestamp":"2025-05-26T02:52:34.650Z"}
+info: yes re-sync done! {"timestamp":"2025-05-26T02:52:34.671Z"}
