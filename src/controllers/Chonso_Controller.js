@@ -99,7 +99,7 @@ class ChonsoController {
         size: limit  // Số lượng kết quả trả về (mặc định chỉ là 10)
       });
 
-      console.log('📦 Kết quả:', result.hits.hits);
+      // console.log('📦 Kết quả:', result.hits.hits);
       if (result.hits.hits.length > 0) {
         res.send({ result: result.hits.hits, limit: limit });
 
