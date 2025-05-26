@@ -10,7 +10,7 @@ const hsts = require('hsts')
 const helmet = require('helmet');
 const app = express();
 const PORT = 8106;
-
+require('./bootstrap-logger'); // kích hoạt ghi log toàn cục
 app.use(cors());
 app.use(morgan("combined"));
 app.use(
@@ -81,14 +81,14 @@ const cspConfig = {
 app.use(helmet.contentSecurityPolicy(cspConfig));
 
 
-
 process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0"
 https.createServer({
   key: privateKey,
   cert: certificate
 }, app).listen(PORT)
 
-console.log("Server is running on port: ", PORT);
+// console.log("Server is running on port: ", PORT);
 // -----development-----
+
 // app.listen(PORT);
 
