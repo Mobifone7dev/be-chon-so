@@ -240,7 +240,7 @@ class ChonsoController {
             code = 0;
             break;
           case 6:
-            message = "CCCD/Passport này đã từng chọn số này. Không cho chọn lần thứ 2";
+            message = "CCCD/Passport này đã giữ thuê bao này quá 3 lần";
             code = 0;
             break;
           case 7:
