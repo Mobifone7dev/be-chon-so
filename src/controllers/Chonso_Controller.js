@@ -70,7 +70,7 @@ class ChonsoController {
 
     console.log('search', search);
     console.log('typeNumber', type);
-    if (search && search.length == 0) {
+    if (search.length == 0) {
       // Nếu có từ khóa tìm kiếm, thay thế dấu '*' thành '%'
       search = '*';
     }

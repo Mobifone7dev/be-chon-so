@@ -26,6 +26,6 @@ yarn-debug.log*
 yarn-error.log*
 package-lock.json
 
-logs
-logs/*
+/logs
+/logs/*
 *.log
