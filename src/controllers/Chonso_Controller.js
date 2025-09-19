@@ -4,6 +4,7 @@ const DbWebsiteConnection = require("../../DbWebsiteConnection");
 const db = require("../models");
 const { sequelize } = require('../models'); // Import sequelize từ nơi đã cấu hình
 const { Client } = require('@elastic/elasticsearch');
+const shopList = require("../rawData/b9_shop_code_cty7.js");
 require('dotenv').config(); // Đọc biến môi trường từ .env
 const client = new Client({
   node: process.env.ELASTIC_NODE,
@@ -313,13 +314,16 @@ class ChonsoController {
       if (!districtCode || !provinceCode) {
         return res.status(400).send({ error: "District code and province code are required" });
       }
-      const result = await db.sequelize.query(
-        `SELECT * FROM db01_owner.shop_tcqlkh WHERE DISTRICT= :districtCode AND PROVINCE = :provinceCode`,
-        {
-          replacements: { districtCode, provinceCode },
-          type: Sequelize.QueryTypes.SELECT,
-        }
-      );
+
+      const result = shopList.filter(shop => shop.DISTRICT === districtCode && shop.PROVINCE === provinceCode);
+      console.log("Filtered Shops:", result);
+      // const result = await db.sequelize.query(
+      //   `SELECT * FROM db01_owner.shop_tcqlkh WHERE DISTRICT= :districtCode AND PROVINCE = :provinceCode`,
+      //   {
+      //     replacements: { districtCode, provinceCode },
+      //     type: Sequelize.QueryTypes.SELECT,
+      //   }
+      // );
 
       console.log("SQL Result:", result);
 

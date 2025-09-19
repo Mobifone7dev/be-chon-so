@@ -29,3 +29,5 @@ package-lock.json
 /logs
 /logs/*
 *.log
+logs/combined.log
+logs/error.log
