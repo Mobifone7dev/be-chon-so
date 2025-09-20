@@ -119,88 +119,88 @@ class ChonsoController {
   }
 
 
-  async chonso(req, res) {
-    try {
-      const limit = parseInt(req.query.limit) || 10; // Số bản ghi trên mỗi trang
-      let search = req.query.search || ""; // Lấy từ khóa tìm kiếm từ query string
-      const type = req.query.type || ""; // Lấy giá trị SPE_NUMBER_TYPE từ query string
+  // async chonso(req, res) {
+  //   try {
+  //     const limit = parseInt(req.query.limit) || 10; // Số bản ghi trên mỗi trang
+  //     let search = req.query.search || ""; // Lấy từ khóa tìm kiếm từ query string
+  //     const type = req.query.type || ""; // Lấy giá trị SPE_NUMBER_TYPE từ query string
 
-      // Nếu có từ khóa tìm kiếm, thay thế dấu '*' thành '%'
-      if (search) {
-        search = search.replace(/\*/g, "%");
-      }
+  //     // Nếu có từ khóa tìm kiếm, thay thế dấu '*' thành '%'
+  //     if (search) {
+  //       search = search.replace(/\*/g, "%");
+  //     }
 
-      // Thêm điều kiện LIKE vào SQL nếu có từ khóa tìm kiếm
-      let whereCondition = search ? `and a.TEL_NUMBER LIKE '${search}'` : "";
+  //     // Thêm điều kiện LIKE vào SQL nếu có từ khóa tìm kiếm
+  //     let whereCondition = search ? `and a.TEL_NUMBER LIKE '${search}'` : "";
 
 
-      // Thêm điều kiện SPE_NUMBER_TYPE nếu có giá trị 'type'
-      if (type) {
-        if (type === '10') {
-          whereCondition += ` AND a.SPE_NUMBER_TYPE = 'Tự do'`; // Tu do
-        } else if (type >= '1' && type <= '9') {
-          whereCondition += ` AND a.SPE_NUMBER_TYPE = '${type}'`; // Những giá trị từ 1 đến 9
-        }
-      }
-      // Câu SQL lấy dữ liệu từ cơ sở dữ liệu
-      // let sql = `
-      //   SELECT v1.*, v2.name FROM (  
-      //   SELECT a.TEL_NUMBER, a.HLR_EXISTS, a.SPE_NUMBER_TYPE,
-      //     DECODE(spe_number_type, '1', 'CK1500', '2', 'CK1200', '3', 'CK1000', '4', 'CK800',
-      //    '5', 'CK500', '6', 'CK400', '7', 'CK300', '8', 'CK250', '9', 'CK150', '10', 'Tự do', 'KXD') loai_ck, a.SHOP_CODE, a.CHANGE_DATETIME
-      //     FROM v_kho_so_all a
-      //     ${whereCondition}
-      //     AND hlr_exists in (1,3) 
-      //     AND ROWNUM <= ${limit} 
-      //     ) v1 left join db01_owner.shop_tcqlkh v2 on v1.shop_code = v2.shop_code order by v1.tel_number asc
-      //   `;
+  //     // Thêm điều kiện SPE_NUMBER_TYPE nếu có giá trị 'type'
+  //     if (type) {
+  //       if (type === '10') {
+  //         whereCondition += ` AND a.SPE_NUMBER_TYPE = 'Tự do'`; // Tu do
+  //       } else if (type >= '1' && type <= '9') {
+  //         whereCondition += ` AND a.SPE_NUMBER_TYPE = '${type}'`; // Những giá trị từ 1 đến 9
+  //       }
+  //     }
+  //     // Câu SQL lấy dữ liệu từ cơ sở dữ liệu
+  //     // let sql = `
+  //     //   SELECT v1.*, v2.name FROM (  
+  //     //   SELECT a.TEL_NUMBER, a.HLR_EXISTS, a.SPE_NUMBER_TYPE,
+  //     //     DECODE(spe_number_type, '1', 'CK1500', '2', 'CK1200', '3', 'CK1000', '4', 'CK800',
+  //     //    '5', 'CK500', '6', 'CK400', '7', 'CK300', '8', 'CK250', '9', 'CK150', '10', 'Tự do', 'KXD') loai_ck, a.SHOP_CODE, a.CHANGE_DATETIME
+  //     //     FROM v_kho_so_all a
+  //     //     ${whereCondition}
+  //     //     AND hlr_exists in (1,3) 
+  //     //     AND ROWNUM <= ${limit} 
+  //     //     ) v1 left join db01_owner.shop_tcqlkh v2 on v1.shop_code = v2.shop_code order by v1.tel_number asc
+  //     //   `;
 
-      let sql = `
-        SELECT v1.tel_number, v1.SPE_NUMBER_TYPE, v1.loai_ck, v1.CHANGE_DATETIME, nvl(v2.is_hold,v1.is_hold) is_hold FROM (  
-        SELECT a.TEL_NUMBER, a.SPE_NUMBER_TYPE,
-          DECODE(spe_number_type, '1', 'CK1500', '2', 'CK1200', '3', 'CK1000', '4', 'CK800',
-         '5', 'CK500', '6', 'CK400', '7', 'CK300', '8', 'CK250', '9', 'CK150', '10', 'Tự do', 'KXD') loai_ck, a.CHANGE_DATETIME, '0' is_hold
-          FROM v_kho_so_all a
-          where CHANGE_DATETIME < sysdate - 31
-          ${whereCondition} 
-          AND hlr_exists in (1,3) 
-          and a.tel_number not like '12%'
-          and a.tel_number not like '905000%'
-          and a.tel_number not like '7826%'
-          AND ROWNUM <= 100 order by SPE_NUMBER_TYPE desc, tel_number
-          ) v1 left join ( select a.isdn tel_number, '1' is_hold from liennguyen1_owner.booking_number a where a.start_time >= sysdate - 1 ) v2 on v1.TEL_NUMBER = v2.TEL_NUMBER
-          where not exists ( select 1 from db01_owner.forbiden_subscriber_tcqlkh b where v1.TEL_NUMBER = b.isdn )
-          order by v1.SPE_NUMBER_TYPE, v1.TEL_NUMBER
-        `;
-      console.log("Generated SQL:", sql); // Debug câu SQL để kiểm tra
+  //     let sql = `
+  //       SELECT v1.tel_number, v1.SPE_NUMBER_TYPE, v1.loai_ck, v1.CHANGE_DATETIME, nvl(v2.is_hold,v1.is_hold) is_hold FROM (  
+  //       SELECT a.TEL_NUMBER, a.SPE_NUMBER_TYPE,
+  //         DECODE(spe_number_type, '1', 'CK1500', '2', 'CK1200', '3', 'CK1000', '4', 'CK800',
+  //        '5', 'CK500', '6', 'CK400', '7', 'CK300', '8', 'CK250', '9', 'CK150', '10', 'Tự do', 'KXD') loai_ck, a.CHANGE_DATETIME, '0' is_hold
+  //         FROM v_kho_so_all a
+  //         where CHANGE_DATETIME < sysdate - 31
+  //         ${whereCondition} 
+  //         AND hlr_exists in (1,3) 
+  //         and a.tel_number not like '12%'
+  //         and a.tel_number not like '905000%'
+  //         and a.tel_number not like '7826%'
+  //         AND ROWNUM <= 100 order by SPE_NUMBER_TYPE desc, tel_number
+  //         ) v1 left join ( select a.isdn tel_number, '1' is_hold from liennguyen1_owner.booking_number a where a.start_time >= sysdate - 1 ) v2 on v1.TEL_NUMBER = v2.TEL_NUMBER
+  //         where not exists ( select 1 from db01_owner.forbiden_subscriber_tcqlkh b where v1.TEL_NUMBER = b.isdn )
+  //         order by v1.SPE_NUMBER_TYPE, v1.TEL_NUMBER
+  //       `;
+  //     console.log("Generated SQL:", sql); // Debug câu SQL để kiểm tra
 
-      // Thực thi câu SQL
-      DbWebsiteConnection.getConnected(sql, {}, function (result) {
-        if (result) {
-          // Chuyển đổi CHANGE_DATETIME sang định dạng ngày tháng năm
-          const formattedResult = result.map(item => {
-            // Kiểm tra nếu có CHANGE_DATETIME và định dạng lại
-            if (item.CHANGE_DATETIME) {
-              const date = new Date(item.CHANGE_DATETIME);
-              const day = date.getDate();
-              const month = date.getMonth() + 1; // Lấy tháng (cộng thêm 1 vì tháng bắt đầu từ 0)
-              const year = date.getFullYear();
-              // Định dạng lại ngày tháng năm theo kiểu "dd/mm/yyyy"
-              item.CHANGE_DATETIME = `${day < 10 ? '0' + day : day}/${month < 10 ? '0' + month : month}/${year}`;
-            }
-            return item;
-          });
+  //     // Thực thi câu SQL
+  //     DbWebsiteConnection.getConnected(sql, {}, function (result) {
+  //       if (result) {
+  //         // Chuyển đổi CHANGE_DATETIME sang định dạng ngày tháng năm
+  //         const formattedResult = result.map(item => {
+  //           // Kiểm tra nếu có CHANGE_DATETIME và định dạng lại
+  //           if (item.CHANGE_DATETIME) {
+  //             const date = new Date(item.CHANGE_DATETIME);
+  //             const day = date.getDate();
+  //             const month = date.getMonth() + 1; // Lấy tháng (cộng thêm 1 vì tháng bắt đầu từ 0)
+  //             const year = date.getFullYear();
+  //             // Định dạng lại ngày tháng năm theo kiểu "dd/mm/yyyy"
+  //             item.CHANGE_DATETIME = `${day < 10 ? '0' + day : day}/${month < 10 ? '0' + month : month}/${year}`;
+  //           }
+  //           return item;
+  //         });
 
-          res.send({ result: formattedResult, limit: limit });
-        } else {
-          res.status(404).send({ message: "No data found." }); // Trả về lỗi nếu không có dữ liệu
-        }
-      });
-    } catch (error) {
-      console.error("Database Query Error:", error); // Log lỗi nếu có
-      res.status(500).send({ error: "Internal Server Error" }); // Trả về lỗi server
-    }
-  }
+  //         res.send({ result: formattedResult, limit: limit });
+  //       } else {
+  //         res.status(404).send({ message: "No data found." }); // Trả về lỗi nếu không có dữ liệu
+  //       }
+  //     });
+  //   } catch (error) {
+  //     console.error("Database Query Error:", error); // Log lỗi nếu có
+  //     res.status(500).send({ error: "Internal Server Error" }); // Trả về lỗi server
+  //   }
+  // }
 
   async insertChonso(req, res) {
     const { in_hoten_kh, in_cccd_kh, in_tinh_kh, in_huyen_kh, in_diachi_kh, in_ip, in_shop_code, in_isdn, in_is_ha_ck, in_link_phieu } = req.body;
