@@ -11,4 +11,4 @@ const client = new Client({
         rejectUnauthorized: false  // Bỏ kiểm tra SSL nếu dùng self-signed cert
     }
 });
-export default client;
+module.exports = client;
