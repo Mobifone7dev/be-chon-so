@@ -1,5 +1,5 @@
 
-import client from "./src/config/elastic.js";
+const client = require("./src/config/elastic.js");
 
 const createIndexDLA = async () => {
     const indexName = "kho-dla";
