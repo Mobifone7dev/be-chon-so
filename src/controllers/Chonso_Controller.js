@@ -118,6 +118,61 @@ class ChonsoController {
     }
   }
 
+  async searchConditionDLA(req, res) {
+    const limit = parseInt(req.query.limit) || 10; // Số bản ghi trên mỗi trang
+    let search = req.query.search || ""; // Lấy từ khóa tìm kiếm từ query string
+    const type = req.query.type || null; // Lấy giá trị SPE_NUMBER_TYPE từ query string
+
+    console.log('search', search);
+    console.log('typeNumber', type);
+    if (search.length == 0) {
+      // Nếu có từ khóa tìm kiếm, thay thế dấu '*' thành '%'
+      search = '*';
+    }
+
+    const mustQuery = [
+      {
+        wildcard: {
+          'phone.keyword': {
+            value: search
+          }
+        }
+      }
+    ];
+
+    if (type) {
+      mustQuery.push({
+        term: {
+          'type.keyword': type
+        }
+      });
+    }
+    try {
+      const result = await client.search({
+        index: "kho-dla",
+        query: {
+          bool: {
+            must: mustQuery
+          }
+        },
+        size: limit  // Số lượng kết quả trả về (mặc định chỉ là 10)
+      });
+
+      // console.log('📦 Kết quả:', result.hits.hits);
+      if (result.hits.hits.length > 0) {
+        res.send({ result: result.hits.hits, limit: limit });
+
+      } else {
+        res.status(200).send({ message: "No data found.", result: [] }); // Trả về lỗi nếu không có dữ liệu
+      }
+    } catch (err) {
+      console.error('❌ Lỗi khi query:', err);
+      res.status(500).send({ error: "Internal Server Error" }); // Trả về lỗi server
+
+    }
+  }
+
+
 
   // async chonso(req, res) {
   //   try {
