@@ -1,5 +1,5 @@
 
-const client = require("../config/elastic.js");
+const client = require("./src/config/elastic.js");
 const XLSX = require("xlsx");
 const path = require("path");
 
