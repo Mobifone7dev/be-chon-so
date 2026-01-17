@@ -1,5 +1,5 @@
 
-const client = require("./src/config/elastic.js");
+const client = require("../config/elastic.js");
 const XLSX = require("xlsx");
 const path = require("path");
 
@@ -33,7 +33,7 @@ const createIndexDLA = async () => {
 }
 async function insertData() {
     // Lấy đường dẫn tuyệt đối đến file Excel trong thư mục public
-    const filePath = path.join(__dirname, "public", "number-dla.xlsx");
+    const filePath = path.join(__dirname, "src", "rawData", "number-dla.xlsx");
 
     console.log("Đang đọc file:", filePath);
 
