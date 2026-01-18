@@ -124,7 +124,7 @@ class ChonsoController {
     const type = req.query.type || null; // Lấy giá trị SPE_NUMBER_TYPE từ query string
 
     console.log('search', search);
-    console.log('typeNumber', type);
+    console.log('type', type);
     if (search.length == 0) {
       // Nếu có từ khóa tìm kiếm, thay thế dấu '*' thành '%'
       search = '*';
@@ -133,7 +133,7 @@ class ChonsoController {
     const mustQuery = [
       {
         wildcard: {
-          'phone.keyword': {
+          phone: {
             value: search
           }
         }
@@ -143,7 +143,7 @@ class ChonsoController {
     if (type) {
       mustQuery.push({
         term: {
-          'type.keyword': type
+          type: type
         }
       });
     }
@@ -158,7 +158,7 @@ class ChonsoController {
         size: limit  // Số lượng kết quả trả về (mặc định chỉ là 10)
       });
 
-      // console.log('📦 Kết quả:', result.hits.hits);
+      console.log('📦 Kết quả:', result.hits.hits);
       if (result.hits.hits.length > 0) {
         res.send({ result: result.hits.hits, limit: limit });
 
