@@ -327,6 +327,45 @@ class ChonsoController {
       res.status(400).send({ result: null, message: "Thiếu tham số.", code: code, codeGS: in_ma_gs },);
     }
   }
+  async addPhoneIndexDLA(req, res) {
+    try {
+      const rows = req.body;
+
+      for (const r of rows) {
+        await client.index({
+          index: "kho-dla",
+          document: {
+            phone: r.phone,
+            type: r.type,
+            loai_ck: r.loai_ck
+          },
+        });
+      }
+
+      res.json({ added: rows.length });
+    } catch (err) {
+      res.status(500).json({ error: err.message });
+    }
+  }
+  async deletePhoneIndexDLA(req, res) {
+    try {
+      const { phones } = req.body;
+
+      const response = await esClient.deleteByQuery({
+        index: "kho-dla",
+        query: {
+          terms: { phone: phones }
+        }
+      });
+
+      res.json({
+        deleted: response.deleted,
+        phonesCount: phones.length
+      });
+    } catch (err) {
+      res.status(500).json({ error: err.message });
+    }
+  }
   async updateIsHoldByTelNumber(req, res) {
     const { telNumberKey, newValue } = req.body;
     console.log("Cập nhật is_hold cho số:", telNumberKey, "với giá trị mới:", newValue);
@@ -405,6 +444,8 @@ class ChonsoController {
       res.status(500).send({ error: "Internal Server Error" });
     }
   }
+
+
 
 }
 

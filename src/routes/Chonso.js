@@ -8,6 +8,10 @@ const fs = require("fs");
 router.post("/update-is-hold", chonsoController.updateIsHoldByTelNumber)
 router.post("/permission", chonsoController.getValidEmails)
 router.post("/insertChonSo", chonsoController.insertChonso)
+
+router.post("/add-phones-index-dla", chonsoController.addPhoneIndexDLA)
+router.post("/delete-phones-index-dla", chonsoController.addPhoneIndexDLA)
+
 router.get("/get-shopcode-by-district", chonsoController.getShopCodeByDistrict); // Route lấy mã shop theo quận huyện
 // router.get("/get-chon-so", chonsoController.chonso); // Route lấy dữ liệu từ v_kho_so_all
 router.get("/search-condition", chonsoController.searchCondition); // Route lấy dữ liệu từ v_kho_so_all theo elastic
