@@ -80,6 +80,20 @@ const cspConfig = {
 };
 app.use(helmet.contentSecurityPolicy(cspConfig));
 
+app.use((err, req, res, next) => {
+  if (err.status === 413) {
+    return res.status(413).json({
+      status: 413,
+      message: "File quá lớn! Vui lòng chọn file nhỏ hơn hoặc chia nhỏ dữ liệu."
+    });
+  }
+
+  // các lỗi khác
+  res.status(err.status || 500).json({
+    status: err.status || 500,
+    message: err.message || "Lỗi server"
+  });
+});
 
 process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0"
 https.createServer({
