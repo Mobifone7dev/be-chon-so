@@ -351,7 +351,7 @@ class ChonsoController {
     try {
       const { phones } = req.body;
 
-      const response = await esClient.deleteByQuery({
+      const response = await client.deleteByQuery({
         index: "kho-dla",
         query: {
           terms: { phone: phones }
