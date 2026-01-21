@@ -2,3 +2,18 @@ error: (node:112064) [SEQUELIZE0004] DeprecationWarning: A boolean value was pas
 (Use `node --trace-deprecation ...` to show where the warning was created) {"timestamp":"2025-05-26T02:51:29.727Z"}
 error: (node:112368) [SEQUELIZE0004] DeprecationWarning: A boolean value was passed to options.operatorsAliases. This is a no-op with v5 and should be removed.
 (Use `node --trace-deprecation ...` to show where the warning was created) {"timestamp":"2025-05-26T02:52:33.773Z"}
+error: (node:12120) [SEQUELIZE0004] DeprecationWarning: A boolean value was passed to options.operatorsAliases. This is a no-op with v5 and should be removed.
+(Use `node --trace-deprecation ...` to show where the warning was created) {"timestamp":"2026-01-21T04:22:48.108Z"}
+error: PayloadTooLargeError: request entity too large
+    at readStream (D:\projects\2025\chon-so\be-chon-so\node_modules\raw-body\index.js:163:17)
+    at getRawBody (D:\projects\2025\chon-so\be-chon-so\node_modules\raw-body\index.js:116:12)
+    at read (D:\projects\2025\chon-so\be-chon-so\node_modules\body-parser\lib\read.js:79:3)
+    at jsonParser (D:\projects\2025\chon-so\be-chon-so\node_modules\body-parser\lib\types\json.js:138:5)
+    at Layer.handle [as handle_request] (D:\projects\2025\chon-so\be-chon-so\node_modules\express\lib\router\layer.js:95:5)
+    at trim_prefix (D:\projects\2025\chon-so\be-chon-so\node_modules\express\lib\router\index.js:328:13)
+    at D:\projects\2025\chon-so\be-chon-so\node_modules\express\lib\router\index.js:286:9
+    at router.process_params (D:\projects\2025\chon-so\be-chon-so\node_modules\express\lib\router\index.js:346:12)
+    at next (D:\projects\2025\chon-so\be-chon-so\node_modules\express\lib\router\index.js:280:10)
+    at urlencodedParser (D:\projects\2025\chon-so\be-chon-so\node_modules\body-parser\lib\types\urlencoded.js:103:7) {"timestamp":"2026-01-21T04:26:31.229Z"}
+error: (node:46328) [SEQUELIZE0004] DeprecationWarning: A boolean value was passed to options.operatorsAliases. This is a no-op with v5 and should be removed.
+(Use `node --trace-deprecation ...` to show where the warning was created) {"timestamp":"2026-01-21T04:30:08.295Z"}

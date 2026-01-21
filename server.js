@@ -10,7 +10,16 @@ const hsts = require('hsts')
 const helmet = require('helmet');
 const app = express();
 const PORT = 8106;
+const bodyParser = require("body-parser");
+
 require('./bootstrap-logger'); // kích hoạt ghi log toàn cục
+// ⚠️ PHẢI đặt TRƯỚC routes
+app.use(express.json({ limit: "100mb" }));
+app.use(express.urlencoded({ limit: "100mb", extended: true }));
+
+// nếu có body-parser
+app.use(bodyParser.json({ limit: "100mb" }));
+app.use(bodyParser.urlencoded({ limit: "100mb", extended: true }));
 app.use(cors());
 app.use(morgan("combined"));
 app.use(
@@ -19,9 +28,6 @@ app.use(
   })
 );
 app.use(express.json());
-console.log(
-  "check", process.env.DB, process.env.USER_WEBSITE, process.env.PASSWORD_WEBSITE
-)
 const route = require("./src/routes");
 app.use("/public", express.static(path.join(__dirname, "public")));
 route(app);

@@ -14,3 +14,31 @@ info: Executing (default): SELECT 1+1 AS result FROM DUAL {"timestamp":"2025-05-
 info: Executing (default): SELECT 1+1 AS result FROM DUAL {"timestamp":"2025-05-26T02:52:34.649Z"}
 info: connected.. {"timestamp":"2025-05-26T02:52:34.650Z"}
 info: yes re-sync done! {"timestamp":"2025-05-26T02:52:34.671Z"}
+info: process chonso7_owner {"timestamp":"2026-01-21T04:22:35.947Z"}
+error: (node:12120) [SEQUELIZE0004] DeprecationWarning: A boolean value was passed to options.operatorsAliases. This is a no-op with v5 and should be removed.
+(Use `node --trace-deprecation ...` to show where the warning was created) {"timestamp":"2026-01-21T04:22:48.108Z"}
+info: Executing (default): SELECT 1+1 AS result FROM DUAL {"timestamp":"2026-01-21T04:22:50.829Z"}
+info: Executing (default): SELECT 1+1 AS result FROM DUAL {"timestamp":"2026-01-21T04:22:50.860Z"}
+info: connected.. {"timestamp":"2026-01-21T04:22:50.862Z"}
+info: yes re-sync done! {"timestamp":"2026-01-21T04:22:50.886Z"}
+error: PayloadTooLargeError: request entity too large
+    at readStream (D:\projects\2025\chon-so\be-chon-so\node_modules\raw-body\index.js:163:17)
+    at getRawBody (D:\projects\2025\chon-so\be-chon-so\node_modules\raw-body\index.js:116:12)
+    at read (D:\projects\2025\chon-so\be-chon-so\node_modules\body-parser\lib\read.js:79:3)
+    at jsonParser (D:\projects\2025\chon-so\be-chon-so\node_modules\body-parser\lib\types\json.js:138:5)
+    at Layer.handle [as handle_request] (D:\projects\2025\chon-so\be-chon-so\node_modules\express\lib\router\layer.js:95:5)
+    at trim_prefix (D:\projects\2025\chon-so\be-chon-so\node_modules\express\lib\router\index.js:328:13)
+    at D:\projects\2025\chon-so\be-chon-so\node_modules\express\lib\router\index.js:286:9
+    at router.process_params (D:\projects\2025\chon-so\be-chon-so\node_modules\express\lib\router\index.js:346:12)
+    at next (D:\projects\2025\chon-so\be-chon-so\node_modules\express\lib\router\index.js:280:10)
+    at urlencodedParser (D:\projects\2025\chon-so\be-chon-so\node_modules\body-parser\lib\types\urlencoded.js:103:7) {"timestamp":"2026-01-21T04:26:31.229Z"}
+info: process chonso7_owner {"timestamp":"2026-01-21T04:30:05.919Z"}
+error: (node:46328) [SEQUELIZE0004] DeprecationWarning: A boolean value was passed to options.operatorsAliases. This is a no-op with v5 and should be removed.
+(Use `node --trace-deprecation ...` to show where the warning was created) {"timestamp":"2026-01-21T04:30:08.295Z"}
+info: Executing (default): SELECT 1+1 AS result FROM DUAL {"timestamp":"2026-01-21T04:30:10.553Z"}
+info: Executing (default): SELECT 1+1 AS result FROM DUAL {"timestamp":"2026-01-21T04:30:10.577Z"}
+info: connected.. {"timestamp":"2026-01-21T04:30:10.580Z"}
+info: yes re-sync done! {"timestamp":"2026-01-21T04:30:10.602Z"}
+info: search *794604026 {"timestamp":"2026-01-21T04:34:34.499Z"}
+info: type  {"timestamp":"2026-01-21T04:34:34.499Z"}
+info: 📦 Kết quả: [object Object] {"timestamp":"2026-01-21T04:34:34.546Z"}
