@@ -445,21 +445,22 @@ class ChonsoController {
     }
   }
 
-  async clearIndexDLA(indexName) {
-    const res = await client.deleteByQuery({
-      index: 'kho-dla',
-      body: {
-        query: {
-          match_all: {}
-        }
-      },
-      refresh: true // để thấy ngay kết quả
-    });
-
-    console.log("Deleted:", res.deleted);
+  async clearIndexDLA(req, res) {
+    try {
+      await client.deleteByQuery({
+        index: 'kho-dla',
+        body: {
+          query: {
+            match_all: {}
+          }
+        },
+        refresh: true // để thấy ngay kết quả
+      });
+      return res.status(200).send({ message: "Delete successfully" });
+    } catch (err) {
+      res.status(500).send({ error: 'Lỗi khi cập nhật is_hold số', error: err });
+    }
   }
-
-
 }
 
 
