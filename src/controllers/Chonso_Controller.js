@@ -445,6 +445,19 @@ class ChonsoController {
     }
   }
 
+  async clearIndexDLA(indexName) {
+    const res = await client.deleteByQuery({
+      index: 'kho-dla',
+      body: {
+        query: {
+          match_all: {}
+        }
+      },
+      refresh: true // để thấy ngay kết quả
+    });
+
+    console.log("Deleted:", res.deleted);
+  }
 
 
 }
